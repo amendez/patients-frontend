@@ -22,7 +22,26 @@
 
         <v-btn
           color="secondary"
-          text
+          variant="tonal"
+          class="rounded-pill"
+          @click="router.push('/patients')"
+        >
+          Patients
+        </v-btn>
+
+        <v-btn
+          variant="tonal"
+          class="rounded-pill"
+          color="secondary"
+          @click="router.push('/fields')"
+        >
+          Field configuration
+        </v-btn>
+
+        <v-btn
+          color="error"
+          variant="tonal"
+          class="rounded-pill"
           @click="logout"
         >
         Log out
@@ -36,6 +55,7 @@
   </v-app>
 </template>
 <script setup lang="ts">
+  const router = useRouter()
   onMounted(() => {
     const token = localStorage.getItem('access-token') || undefined
     if (!token) {

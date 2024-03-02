@@ -5,11 +5,39 @@
         @close="close"
     >
         <v-card>
-            <v-card-title>
-                <h4>{{ field.name }}</h4>
-                {{ field.type }}
-            </v-card-title>
+            <v-card-text>
+                <v-text-field
+                    v-model="field.name"
+                    label="Name"
+                    variant="outlined"
+                />
+                
+                <v-select
+                    label="Type"
+                    :items="['Number', 'Text']"
+                    v-model="field.type"
+                    variant="outlined"
+                />
+            </v-card-text>
         </v-card>
+        <template v-slot:actions-left>
+            <v-btn
+                :loading="loading"
+                @click="close"
+            >
+                Close
+            </v-btn>
+        </template>
+        <template v-slot:actions-right>
+            <v-btn
+                size="large"
+                color="primary"
+                :loading="loading"
+                @click="save"
+            >
+                Save
+            </v-btn>
+        </template>
     </drawer>        
 </template>
 
@@ -21,6 +49,9 @@
     const api = useApi()
     const field = ref({})
     const drawer = ref(true)
+    const loading = ref(false)
+
+    const emit = defineEmits(['refresh'])
 
     onMounted(async () => {
          const { data } = await api({url: `/additional_field_configurations/${route.params.id}`})
@@ -29,6 +60,19 @@
 
     const close = () => {
         router.push({name: 'fields'})
+    }
+
+    const save = async () => {
+        loading.value = true
+        const { data } = await api({
+            url: `/additional_field_configurations/${route.params.id}/`,
+            method: 'PATCH',
+            data: field.value
+        })
+        field.value = data
+        loading.value = false
+        emit('refresh')
+        close()
     }
 </script>
 
