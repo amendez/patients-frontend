@@ -77,9 +77,9 @@
             method: 'POST',
             data: field.value
         })
-        field.value = data
         loading.value = false
         dialog.value = false
+        field.value = {}
         emit('refresh')
     }
 </script>

@@ -46,7 +46,7 @@
                     </v-col>
                 </v-row>
                 <v-row>
-                    <v-col v-for="field in patient.additional_fields" :key="field.id">
+                    <v-col cols="6" v-for="field in patient.additional_fields" :key="field.id">
                         <div class="text-caption">
                             {{ field.name }}:
                         </div>
