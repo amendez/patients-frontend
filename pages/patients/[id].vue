@@ -1,95 +1,85 @@
 <template>
-      <v-navigation-drawer
+    <drawer
         v-model="drawer"
-        temporary
-        location="right"
-        width="720"
-        @update:model-value="close"
-      >
-      <div class="d-flex drawer-header align-center justify-space-between bg-background px-3">
-        <div class="qtm-h1 text-uppercase" v-text="'Patient detail'" />
-            <v-hover v-slot="{ isHovering }">
-                <v-btn variant="text" :color="isHovering ? 'secondary' : 'primary'" icon="mdi-close" @click="close" />
-            </v-hover>
-        </div>
-        <div class="drawer-content px-3">
-            <v-card>
-                <v-card-title>
-                    <h4>{{ fullName }}</h4>
-                </v-card-title>
-                <v-card-text>
-                    <v-row>
-                        <v-col>
-                            <div class="text-caption">
-                                Date of birth:
-                            </div>
-                            <div class="text-body-1 font-weight-bold">
-                                {{ patient.date_of_birth }}
-                            </div>
-                        </v-col>
-                        <v-col>
-                            <div class="text-caption">
-                                Status:
-                            </div>
-                            <div class="text-body-1 font-weight-bold">
-                                {{ patient.status }}
-                            </div>
-                        </v-col>
-                    </v-row>
-                    <v-row>
-                        <v-col>
-                            <div class="text-caption">
-                                Email:
-                            </div>
-                            <div class="text-body-1 font-weight-bold">
-                                {{ patient.email }}
-                            </div>
-                        </v-col>
-                        <v-col>
-                            <div class="text-caption">
-                                Patient since:
-                            </div>
-                            <div class="text-body-1 font-weight-bold">
-                                {{ patient.created_at }}
-                            </div>
-                        </v-col>
-                    </v-row>
-                    <v-row>
-                        <v-col v-for="field in patient.additional_fields" :key="field.id">
-                            <div class="text-caption">
-                                {{ field.name }}:
-                            </div>
-                            <div class="text-body-1 font-weight-bold">
-                                {{ field.value }} 
-                            </div>
-                        </v-col>
-                    </v-row>
-                    <v-row>
-                        <v-col cols="12" v-for="address in patient.addresses" :key="address.id">
-                            <div class="text-caption">
-                                Address:
-                            </div>
-                            <div class="text-body-1 font-weight-bold">
-                                {{ address.address1 }} {{ address.address2 }}, {{ address.city }}, {{ address.state }}, {{ address.zip_code }}, {{ address.country }} 
-                            </div>
-                        </v-col>
-                    </v-row>
-                </v-card-text>
-            </v-card>
-        </div>
-        <div class="bg-white drawer-footer d-flex align-center justify-space-between pa-8">
-            <div>
-                <v-btn color="secondary">Edit patient</v-btn>
-            </div>
-            <div>
-                <v-btn icon="mdi-delete" color="error" />
-            </div>
-        </div>
-      </v-navigation-drawer>        
+        title="Patient detail"
+        @close="close"
+    >
+        <v-card>
+            <v-card-title>
+                <h4>{{ fullName }}</h4>
+            </v-card-title>
+            <v-card-text>
+                <v-row>
+                    <v-col>
+                        <div class="text-caption">
+                            Date of birth:
+                        </div>
+                        <div class="text-body-1 font-weight-bold">
+                            {{ patient.date_of_birth }}
+                        </div>
+                    </v-col>
+                    <v-col>
+                        <div class="text-caption">
+                            Status:
+                        </div>
+                        <div class="text-body-1 font-weight-bold">
+                            {{ patient.status }}
+                        </div>
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col>
+                        <div class="text-caption">
+                            Email:
+                        </div>
+                        <div class="text-body-1 font-weight-bold">
+                            {{ patient.email }}
+                        </div>
+                    </v-col>
+                    <v-col>
+                        <div class="text-caption">
+                            Patient since:
+                        </div>
+                        <div class="text-body-1 font-weight-bold">
+                            {{ patient.created_at }}
+                        </div>
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col v-for="field in patient.additional_fields" :key="field.id">
+                        <div class="text-caption">
+                            {{ field.name }}:
+                        </div>
+                        <div class="text-body-1 font-weight-bold">
+                            {{ field.value }} 
+                        </div>
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col cols="12" v-for="address in patient.addresses" :key="address.id">
+                        <div class="text-caption">
+                            Address:
+                        </div>
+                        <div class="text-body-1 font-weight-bold">
+                            {{ address.address1 }} {{ address.address2 }}, {{ address.city }}, {{ address.state }}, {{ address.zip_code }}, {{ address.country }} 
+                        </div>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+        </v-card>
+    
+        <template v-slot:actions-left>
+            <v-btn color="secondary">Edit patient</v-btn>
+        </template>
+        <template v-slot:actions-right>
+            <v-btn icon="mdi-delete" color="error" />
+        </template>
+    </drawer>        
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+    import Drawer from '@/components/drawer.vue'
+    import { computed } from 'vue';
 
     const router = useRouter()
     const route = useRoute()
