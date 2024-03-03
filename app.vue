@@ -1,29 +1,24 @@
 <template>
   <v-app>
     <v-layout>
-      <v-app-bar class="bg-secondary text-primary" image="/public/sand.png">
+      <v-app-bar class="bg-secondary text-primary" image="/sand.png">
         <template v-slot:image>
           <v-img
             gradient="to top right, rgba(241,234,222,.8), rgba(237,118,47,.7)"
           ></v-img>
         </template>
-
-        <template v-slot:prepend>
-          <v-img
-            src="/public/logo.png"
-          />
-        </template>
         
-        <v-app-bar-title class="text-h5">
+        <v-app-bar-title class="text-h5 text-black font-weight-black">
           Patients dashboard
         </v-app-bar-title>
         
         <v-spacer></v-spacer>
 
         <v-btn
-          color="secondary"
+          color="black"
           variant="tonal"
-          class="rounded-pill"
+          prepend-icon="mdi-account-multiple-outline"
+          class="rounded-pill mr-1"
           @click="router.push('/patients')"
         >
           Patients
@@ -31,8 +26,9 @@
 
         <v-btn
           variant="tonal"
-          class="rounded-pill"
-          color="secondary"
+          class="rounded-pill mr-1"
+          color="black"
+          prepend-icon="mdi-cog-outline"
           @click="router.push('/fields')"
         >
           Field configuration
@@ -41,6 +37,7 @@
         <v-btn
           color="error"
           variant="tonal"
+          prepend-icon="mdi-logout-variant"
           class="rounded-pill"
           @click="logout"
         >

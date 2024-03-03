@@ -6,22 +6,22 @@
       >
         <template v-slot:activator="{ props: activatorProps }">
           <v-btn
-            prepend-icon="mdi-account-plus"
-            text="Create Patient"
-            color="primary"
+            :prepend-icon="props.edit ? 'mdi-pencil' : 'mdi-account-plus'"
+            :text="props.edit ? 'Edit Patient' : 'Create Patient'"
+            :color="props.edit ? 'secondary' : 'primary'"
             v-bind="activatorProps"
           ></v-btn>
         </template>
   
         <v-card
-          prepend-icon="mdi-account-plus"
-          title="New Patient"
+          :prepend-icon="props.edit ? 'mdi-pencil' : 'mdi-account-plus'"
+          :title="props.edit ? 'Edit Patient' : 'Create Patient'"
         >
           <v-card-text>
             <v-row dense>
               <v-col cols="4">
                 <v-text-field
-                  v-model="patient.first_name"
+                  v-model="internalPatient.first_name"
                   label="First Name"
                   required
                 />
@@ -29,7 +29,7 @@
 
               <v-col cols="4">
                 <v-text-field
-                  v-model="patient.middle_name"
+                  v-model="internalPatient.middle_name"
                   label="Middle Name"
                   required
                 />
@@ -37,7 +37,7 @@
   
               <v-col cols="4">
                 <v-text-field
-                  v-model="patient.last_name"
+                  v-model="internalPatient.last_name"
                   label="Last Name"
                   required
                 />
@@ -47,7 +47,7 @@
             <v-row dense>
               <v-col cols="6">
                 <v-text-field
-                  v-model="patient.email"
+                  v-model="internalPatient.email"
                   label="Email"
                   type="email"
                   required
@@ -57,7 +57,7 @@
               <v-col cols="6">
                 <datepicker
                   label="Birthdate"
-                  v-model="patient.date_of_birth"
+                  v-model="internalPatient.date_of_birth"
                 />
               </v-col>
             </v-row>
@@ -65,7 +65,7 @@
             <v-row>
               <v-col cols="12">
                 <v-select
-                  v-model="patient.status"
+                  v-model="internalPatient.status"
                   label="Status"
                   :items="['Inquiry', 'Onboarding', 'Active', 'Churned']"
                   required
@@ -76,7 +76,7 @@
             <v-row>
               <v-col cols="6" v-for="field in customFields" :key="field.id">
                 <v-text-field
-                  v-model="patient[`custom-${field.id}`]"
+                  v-model="internalPatient[`custom-${field.id}`]"
                   :label="field.name"
                 />
               </v-col>
@@ -108,14 +108,36 @@
 </template>
 
 <script setup lang="ts">
+import type { mergeProps } from 'vue';
+
     const dialog = ref(false)
-    const patient = ref({
+    const internalPatient = ref({
       status: 'Inquiry',
     })
     const loading = ref(false)
     const api = useApi()
     const customFields = ref([])
-    
+
+    const props = defineProps({
+      patient: {
+          type: Object,
+          default: () => ({})
+      },
+      edit: {
+          type: Boolean,
+          default: false
+      }
+    })
+
+    watch(dialog, (newVal) => {
+        if (props.edit && newVal) {
+          internalPatient.value = {...props.patient}
+          internalPatient.value.additional_fields.map(field => {
+            internalPatient.value[`custom-${field.id}`] = field.value
+          })
+        }
+    })
+
     const emit = defineEmits(['refresh'])
 
     const fetchCustomFields = async () => {
@@ -125,14 +147,23 @@
 
     const save = async () => {
         loading.value = true
+        let url, method
 
-        patient.value.date_of_birth = new Date(patient.value.date_of_birth).toISOString().slice(0, 10)
+        internalPatient.value.date_of_birth = new Date(internalPatient.value.date_of_birth).toISOString().slice(0, 10)
+
+        if (props.edit) {
+            url = `/patients/${props.patient.id}/`
+            method = 'PATCH'
+        } else {
+            url = `/patients/`
+            method = 'POST'
+        }
 
         try {
           const { data } = await api({
-              url: `/patients/`,
-              method: 'POST',
-              data: patient.value
+              url,
+              method,
+              data: internalPatient.value
           })
         }
         catch (error) {
@@ -140,7 +171,7 @@
         }
         loading.value = false
         dialog.value = false
-        patient.value = {}
+        internalPatient.value = {}
         emit('refresh')
     }
 

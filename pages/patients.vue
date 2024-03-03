@@ -3,10 +3,16 @@
         <v-main>
             <v-row>
                 <v-col>
-                    <h1 class="mb-2">Patients</h1>
+                    <h1 class="mb-2">
+                        <v-icon size="small" class="mt-n2">mdi-account-group</v-icon>
+                        Patients
+                    </h1>
                 </v-col>
                 <v-col class="text-right">
-                    <create-patient @refresh="fetchPatients"/>
+                    <create-edit-patient
+                        :edit="false"    
+                        @refresh="fetchPatients"
+                    />
                 </v-col>
             </v-row>
         
@@ -52,7 +58,7 @@
 
     onMounted(async () => {
         loading.value = true
-        fetchPatients()
+        await fetchPatients()
         loading.value = false
     })
 

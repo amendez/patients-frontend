@@ -28,7 +28,11 @@
   const selectedDate = ref(modelValue);
   
   const formattedDate = computed(() => {
-    return selectedDate.value ? selectedDate.value.toLocaleDateString("en") : "";
+    try {
+      return selectedDate.value ? selectedDate.value.toLocaleDateString("en") : "";
+    } catch (e) {
+      return "";
+    }
   });
   
   const defaultYear = new Date().getFullYear() - 12;

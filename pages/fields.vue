@@ -3,7 +3,10 @@
         <v-main>
             <v-row>
                 <v-col>
-                    <h1 class="mb-2">Field configuration</h1>
+                    <h1 class="mb-2">
+                        <v-icon size="small">mdi-cog-outline</v-icon>
+                        Field configuration
+                    </h1>
                 </v-col>
                 <v-col class="text-right">
                     <create-custom-field @refresh="fetchFields"/>

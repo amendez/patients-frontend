@@ -4,7 +4,8 @@
         title="Patient detail"
         @close="close"
     >
-        <v-card>
+        <v-skeleton-loader v-if="loading" type="article@10"></v-skeleton-loader>
+        <v-card v-else>
             <v-card-title>
                 <h4>{{ fullName }}</h4>
             </v-card-title>
@@ -63,6 +64,7 @@
                         <div class="text-body-1 font-weight-bold">
                             {{ address.address1 }} {{ address.address2 }}, {{ address.city }}, {{ address.state }}, {{ address.zip_code }}, {{ address.country }} 
                             <create-edit-address
+                                v-if="patient"
                                 :patient-id="patient.id"
                                 :address="address"
                                 :edit="true"
@@ -73,6 +75,7 @@
                     </v-col>
                     <v-col cols="12">
                         <create-edit-address
+                            v-if="patient"
                             :patient-id="patient.id"
                             :edit="false"
                             @refresh="fetchPatient"
@@ -82,11 +85,8 @@
             </v-card-text>
         </v-card>
     
-        <template v-slot:actions-left>
-            <v-btn color="secondary">Edit patient</v-btn>
-        </template>
         <template v-slot:actions-right>
-            <v-btn icon="mdi-delete" color="error" />
+            <create-edit-patient v-if="patient" :edit="true" :patient="patient" @refresh="fetchPatient" />
         </template>
     </drawer>        
 </template>
@@ -100,13 +100,18 @@
     const api = useApi()
     const patient = ref({})
     const drawer = ref(true)
+    const loading = ref(false)
 
     const fetchPatient = async () => {
         const { data } = await api.get(`/patients/${route.params.id}`)
         patient.value = data
     }
 
-    onMounted(fetchPatient)
+    onMounted(async() => {
+        loading.value = true
+        await fetchPatient()
+        loading.value = false
+    })
 
     const close = () => {
         router.push({name: 'patients'})
