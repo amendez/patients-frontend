@@ -62,7 +62,21 @@
                         </div>
                         <div class="text-body-1 font-weight-bold">
                             {{ address.address1 }} {{ address.address2 }}, {{ address.city }}, {{ address.state }}, {{ address.zip_code }}, {{ address.country }} 
+                            <create-edit-address
+                                :patient-id="patient.id"
+                                :address="address"
+                                :edit="true"
+                                class="d-inline rounded"
+                                @refresh="fetchPatient"
+                            />
                         </div>
+                    </v-col>
+                    <v-col cols="12">
+                        <create-edit-address
+                            :patient-id="patient.id"
+                            :edit="false"
+                            @refresh="fetchPatient"
+                        />
                     </v-col>
                 </v-row>
             </v-card-text>
@@ -87,10 +101,12 @@
     const patient = ref({})
     const drawer = ref(true)
 
-    onMounted(async () => {
-         const { data } = await api({url: `/patients/${route.params.id}`})
-         patient.value = data
-    })
+    const fetchPatient = async () => {
+        const { data } = await api.get(`/patients/${route.params.id}`)
+        patient.value = data
+    }
+
+    onMounted(fetchPatient)
 
     const close = () => {
         router.push({name: 'patients'})
