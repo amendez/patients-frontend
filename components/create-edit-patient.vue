@@ -117,6 +117,7 @@ import type { mergeProps } from 'vue';
     const loading = ref(false)
     const api = useApi()
     const customFields = ref([])
+    const { $nt } = useNuxtApp()
 
     const props = defineProps({
       patient: {
@@ -149,7 +150,14 @@ import type { mergeProps } from 'vue';
         loading.value = true
         let url, method
 
-        internalPatient.value.date_of_birth = new Date(internalPatient.value.date_of_birth).toISOString().slice(0, 10)
+        try {
+          internalPatient.value.date_of_birth = new Date(internalPatient.value.date_of_birth).toISOString().slice(0, 10)
+        }
+        catch (error) {
+          $nt.show('Invalid date format')
+          loading.value = false
+          return
+        }
 
         if (props.edit) {
             url = `/patients/${props.patient.id}/`
@@ -165,14 +173,16 @@ import type { mergeProps } from 'vue';
               method,
               data: internalPatient.value
           })
+          dialog.value = false
+          internalPatient.value = {}
+          emit('refresh')
         }
-        catch (error) {
-          console.error(error)
+        catch (error) {          
+          for (const key of Object.keys(error.response.data)) {
+              $nt.show(`${key}: ${error.response.data[key]}`)
+          }
         }
         loading.value = false
-        dialog.value = false
-        internalPatient.value = {}
-        emit('refresh')
     }
 
     onMounted(fetchCustomFields)

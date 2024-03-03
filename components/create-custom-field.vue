@@ -24,6 +24,7 @@
                   v-model="field.name"
                   label="Name"
                   required
+                  :rules="[required]"
                 />
               </v-col>
   
@@ -33,6 +34,7 @@
                   :items="['Number', 'Text']"
                   label="Type"
                   required
+                  :rules="[required]"
                 />
               </v-col>
             </v-row>
@@ -67,19 +69,31 @@
     const field = ref({})
     const loading = ref(false)
     const api = useApi()
+    const { $nt } = useNuxtApp()
     
     const emit = defineEmits(['refresh'])
 
     const save = async () => {
         loading.value = true
-        const { data } = await api({
-            url: `/additional_field_configurations/`,
-            method: 'POST',
-            data: field.value
-        })
+        try {
+          const { data } = await api({
+              url: `/additional_field_configurations/`,
+              method: 'POST',
+              data: field.value
+          })
+          dialog.value = false
+          field.value = {}
+        }
+        catch (error) {          
+          for (const key of Object.keys(error.response.data)) {
+              $nt.show(`${key}: ${error.response.data[key]}`)
+          }
+        }
         loading.value = false
-        dialog.value = false
-        field.value = {}
         emit('refresh')
+    }
+
+    const required = (v: string) => {
+        return !!v || 'Field is required'
     }
 </script>

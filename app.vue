@@ -1,33 +1,35 @@
 <template>
   <v-app>
     <v-layout>
-      <v-app-bar class="bg-secondary text-primary" image="/sand.png">
+      <v-app-bar class="bg-secondary text-primary" image="/bar.png">
         <template v-slot:image>
           <v-img
-            gradient="to top right, rgba(241,234,222,.8), rgba(237,118,47,.7)"
+            gradient="to top right, rgba(241,234,222,.3), rgba(237,118,47,.4)"
           ></v-img>
         </template>
         
-        <v-app-bar-title class="text-h5 text-black font-weight-black">
-          Patients dashboard
+        <v-app-bar-title class="font-weight-black">
+          <div class="bg-secondary rounded-pill pa-3 text-primary elevation-4 d-inline-block">
+            Patients Dashboard
+          </div>
         </v-app-bar-title>
         
         <v-spacer></v-spacer>
 
         <v-btn
-          color="black"
-          variant="tonal"
+          elevation="4"
+          class="rounded-pill mr-2 bg-secondary"
+          color="primary"
           prepend-icon="mdi-account-multiple-outline"
-          class="rounded-pill mr-1"
           @click="router.push('/patients')"
         >
           Patients
         </v-btn>
 
         <v-btn
-          variant="tonal"
-          class="rounded-pill mr-1"
-          color="black"
+          elevation="4"
+          class="rounded-pill mr-4 bg-secondary"
+          color="primary"
           prepend-icon="mdi-cog-outline"
           @click="router.push('/fields')"
         >
@@ -35,10 +37,10 @@
         </v-btn>
 
         <v-btn
+          elevation="4"
+          class="rounded-pill bg-secondary"
           color="error"
-          variant="tonal"
           prepend-icon="mdi-logout-variant"
-          class="rounded-pill"
           @click="logout"
         >
         Log out

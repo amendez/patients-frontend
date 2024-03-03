@@ -1,5 +1,4 @@
 
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: false,
@@ -11,7 +10,6 @@ export default defineNuxtConfig({
   ],
   vuetify: {
     moduleOptions: {
-      /* module specific options */
     },
     vuetifyOptions: {
       icons: {

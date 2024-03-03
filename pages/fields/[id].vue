@@ -50,6 +50,7 @@
     const field = ref({})
     const drawer = ref(true)
     const loading = ref(false)
+    const { $nt } = useNuxtApp()
 
     const emit = defineEmits(['refresh'])
 
@@ -64,15 +65,22 @@
 
     const save = async () => {
         loading.value = true
-        const { data } = await api({
-            url: `/additional_field_configurations/${route.params.id}/`,
-            method: 'PATCH',
-            data: field.value
-        })
-        field.value = data
+        try {
+            const { data } = await api({
+                url: `/additional_field_configurations/${route.params.id}/`,
+                method: 'PATCH',
+                data: field.value
+            })
+            field.value = data
+            emit('refresh')
+            close()
+        }
+        catch (error) {
+            for (const key of Object.keys(error.response.data)) {
+                $nt.show(`${key}: ${error.response.data[key]}`)
+            }
+        }
         loading.value = false
-        emit('refresh')
-        close()
     }
 </script>
 
