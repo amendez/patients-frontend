@@ -121,6 +121,7 @@ import type { mergeProps } from 'vue';
       status: 'Inquiry',
     })
     const loading = ref(false)
+    const router = useRouter()
     const api = useApi()
     const customFields = ref([])
     const { $nt } = useNuxtApp()
@@ -182,13 +183,14 @@ import type { mergeProps } from 'vue';
           dialog.value = false
           internalPatient.value = {}
           emit('refresh')
+          router.push(`/patients/${data.id}`)
         }
         catch (error) {          
           for (const key of Object.keys(error.response.data)) {
               $nt.show(`${key}: ${error.response.data[key]}`)
           }
         }
-        loading.value = false
+        loading.value = false   
     }
 
     onMounted(fetchCustomFields)
