@@ -15,18 +15,51 @@
                     />
                 </v-col>
             </v-row>
-        
-        <v-data-table
-            :items="patients"
-            :headers="headers"
-            :loading="loading"
-            hover
-            @click:row="handleClick"
-        >
-            <template v-slot:loading>
-                <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
-            </template>
-        </v-data-table>
+
+            <v-row>
+                <v-col cols="10">
+                    <v-text-field
+                        v-model="search"
+                        label="Search"
+                        placeholder="Search by name, city, DoB or status"
+                        variant="outlined"
+                        density="compact"
+                        :disabled="loading"
+                        :loading="loading"
+                        clearable
+                        @keyup.enter="searching = search"
+                        @click:clear="search = ''; searching = ''"
+                    />
+                </v-col>
+                <v-col cols="2">
+                    <v-btn
+                        color="primary"
+                        :loading="loading"
+                        prepend-icon="mdi-magnify"
+                        @click="searching = search"
+                    >
+                        Search
+                    </v-btn>
+                </v-col>
+            </v-row>
+
+            <v-data-table-server
+                v-model:items-per-page="itemsPerPage"
+                v-model:page="currentPage"
+                v-model:sort-by="sortBy"
+                :headers="headers"
+                :items="serverItems"
+                :items-length="totalItems"
+                :loading="loading"
+                :search="searching"
+                hover
+                @click:row="handleClick"
+                @update:options="loadPatients"
+            >
+                <template v-slot:loading>
+                    <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+                </template>
+            </v-data-table-server>
         </v-main>
         
         <NuxtPage @refresh="fetchPatients" />
@@ -36,8 +69,31 @@
     const api = useApi()
     const router = useRouter()
 
-    const patients = ref([])
     const loading = ref(true)
+
+    const itemsPerPage = ref(10)
+    const totalItems = ref(0)
+    const search = ref('')
+    const searching = ref('')
+    const serverItems = ref([])
+    const currentPage = ref(1)
+    const sortBy = ref([])
+
+    const loadPatients = async ({ page, itemsPerPage, sortBy }) => {
+        loading.value = true
+        const offset = (page - 1) * itemsPerPage
+
+        let ordering = ""
+        if (sortBy.length > 0) {
+            const field = sortBy[0].key === 'full_name' ? 'last_name' : sortBy[0].key
+            ordering = (sortBy[0].order === 'asc') ? `ordering=${field}&` : `ordering=-${field}&`
+        }
+
+        const { data } = await api({url: `/patients/?offset=${offset}&limit=${itemsPerPage}&${ordering}search=${search.value}`})
+        serverItems.value = data.results
+        totalItems.value = data.count
+        loading.value = false
+    }
 
     const headers = ref([
         {
@@ -47,20 +103,13 @@
           key: 'full_name',
         },
         { title: 'Birthdate', key: 'date_of_birth' },
-        { title: 'City', key: 'city' },
+        { title: 'City', key: 'city', sortable: false, },
         { title: 'Status', key: 'status' },
     ])
 
     const fetchPatients = async () => {
-        const { data } = await api({url: '/patients/'})
-        patients.value = data.results
+        loadPatients({ page: currentPage.value, itemsPerPage: itemsPerPage.value, sortBy: sortBy.value })
     }
-
-    onMounted(async () => {
-        loading.value = true
-        await fetchPatients()
-        loading.value = false
-    })
 
     const handleClick = (_, row: any) => {
         router.push(`/patients/${row.item.id}`)

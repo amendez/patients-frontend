@@ -69,7 +69,7 @@
                                 :address="address"
                                 :edit="true"
                                 class="d-inline rounded"
-                                @refresh="fetchPatient"
+                                @refresh="refresh"
                             />
                         </div>
                     </v-col>
@@ -78,7 +78,7 @@
                             v-if="patient"
                             :patient-id="patient.id"
                             :edit="false"
-                            @refresh="fetchPatient"
+                            @refresh="refresh"
                         />
                     </v-col>
                 </v-row>
@@ -86,7 +86,7 @@
         </v-card>
     
         <template v-slot:actions-right>
-            <create-edit-patient v-if="patient" :edit="true" :patient="patient" @refresh="fetchPatient" />
+            <create-edit-patient v-if="patient" :edit="true" :patient="patient" @refresh="refresh" />
         </template>
     </drawer>        
 </template>
@@ -107,6 +107,8 @@
         patient.value = data
     }
 
+    const emit = defineEmits(['refresh'])
+
     onMounted(async() => {
         loading.value = true
         await fetchPatient()
@@ -115,6 +117,11 @@
 
     const close = () => {
         router.push({name: 'patients'})
+    }
+
+    const refresh = () => {
+        fetchPatient()
+        emit('refresh')
     }
 
     const fullName = computed(() => {
