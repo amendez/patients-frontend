@@ -76,7 +76,13 @@
             <v-row>
               <v-col cols="6" v-for="field in customFields" :key="field.id">
                 <v-text-field
+                  v-if="field.type === 'Text'"
                   v-model="internalPatient[`custom-${field.id}`]"
+                  :label="field.name"
+                />
+                <v-text-field
+                  v-else
+                  v-model.number="internalPatient[`custom-${field.id}`]"
                   :label="field.name"
                 />
               </v-col>
