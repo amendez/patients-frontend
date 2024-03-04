@@ -72,7 +72,7 @@
                                 @refresh="refresh"
                             />
 
-                            <div style="height:300px; width:100%">
+                            <div style="height:300px; width:100%" v-if="address.latitude && address.longitude">
                                 <LMap
                                     ref="map"
                                     :options="{ zoomControl: false, scrollWheelZoom: false }"
