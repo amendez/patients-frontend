@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@cssninja/nuxt-toaster": "^0.3.12",
+    "nuxt3-leaflet": "^1.0.12",
     "vuetify-nuxt-module": "^0.12.0"
   }
 }

@@ -71,6 +71,23 @@
                                 class="d-inline rounded"
                                 @refresh="refresh"
                             />
+
+                            <div style="height:300px; width:100%">
+                                <LMap
+                                    ref="map"
+                                    :options="{ zoomControl: false, scrollWheelZoom: false }"
+                                    :zoom="zoom"
+                                    :center="[address.latitude, address.longitude]"
+                                >
+                                    <LTileLayer
+                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                        attribution="&amp;copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors"
+                                        layer-type="base"
+                                        name="OpenStreetMap"
+                                    />
+                                    <l-marker :lat-lng="[address.latitude, address.longitude]" />
+                                </LMap>
+                            </div>
                         </div>
                     </v-col>
                     <v-col cols="12">
@@ -93,7 +110,7 @@
 
 <script setup lang="ts">
     import Drawer from '@/components/drawer.vue'
-    import { computed } from 'vue';
+    import { computed } from 'vue'
 
     const router = useRouter()
     const route = useRoute()
@@ -101,6 +118,7 @@
     const patient = ref({})
     const drawer = ref(true)
     const loading = ref(false)
+    const zoom = ref(15)
 
     const fetchPatient = async () => {
         const { data } = await api.get(`/patients/${route.params.id}`)

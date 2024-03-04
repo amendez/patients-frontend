@@ -6,7 +6,8 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: [
     'vuetify-nuxt-module',
-    '@cssninja/nuxt-toaster'
+    '@cssninja/nuxt-toaster',
+    'nuxt3-leaflet'
   ],
   vuetify: {
     moduleOptions: {
